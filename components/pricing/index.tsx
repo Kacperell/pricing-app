@@ -39,25 +39,25 @@ const Pricing: React.FC = () => {
         return [...prevSelectedServices, serviceId];
       }
       //delete service when is unchecked
-      prevSelectedServices = prevSelectedServices.filter(
+      const newSelectedServices = prevSelectedServices.filter(
         (s) => s !== serviceId
       );
-      const invalidServices = prevSelectedServices.filter((s) => {
+      const invalidServices = newSelectedServices.filter((s) => {
         // check if services are invalid, this happens when service is only available when another is selected.
         const service = offer.services.find((srv) => srv.id === s);
         const requiredService = service?.availableOnlyWith;
         return (
-          requiredService && !prevSelectedServices?.includes(requiredService)
+          requiredService && !newSelectedServices?.includes(requiredService)
         );
       });
-      return prevSelectedServices.filter(
+      return newSelectedServices.filter(
         // remove invalid services
         (s) => s !== serviceId && !invalidServices.includes(s)
       );
     });
   };
 
-  const cartSummary = useMemo<CartSummaryData>(() => {
+  const cartSummaryData = useMemo<CartSummaryData>(() => {
     if (!selectedServices || !offer) {
       return {
         basePrice: 0,
@@ -66,18 +66,11 @@ const Pricing: React.FC = () => {
       };
     }
 
-    const selectedServicesPrices = selectedServices.map((selectedServiceId) => {
-      const selectedService = offer.services.find(
-        (service) => service.id === selectedServiceId
-      );
-      if (selectedService === undefined) {
-        return 0;
-      }
-      return selectedService.price;
-    });
+    const basePrice = selectedServices
+      .map((id) => offer.services.find((s) => s.id === id)?.price ?? 0)
+      .reduce((total, price) => total + price, 0);
 
-    const basePrice = selectedServicesPrices.reduce((a, b) => a + b, 0);
-
+    console.log("Offer,pro", offer.promotions);
     const promotions = offer.promotions.filter((promotion) =>
       promotion.services.every((serviceId) =>
         selectedServices.includes(serviceId)
@@ -172,7 +165,7 @@ const Pricing: React.FC = () => {
           />
         ))}
       </FormGroup>
-      <CartSummary cartSummary={cartSummary} offer={offer} />
+      <CartSummary cartSummaryData={cartSummaryData} offer={offer} />
     </PricingContainer>
   );
 };

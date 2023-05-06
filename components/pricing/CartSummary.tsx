@@ -4,42 +4,42 @@ import { PriceBeforeDiscount, PromotionInfo } from "./styles";
 import { v4 as uuidv4 } from "uuid";
 import { getServiceNameById } from "./helpers";
 interface Props {
-  cartSummary: CartSummaryData;
+  cartSummaryData: CartSummaryData;
   offer: Offer;
 }
-export const CartSummary = ({ cartSummary, offer }: Props) => {
+export const CartSummary = ({ cartSummaryData, offer }: Props) => {
   const sortedPromotionsByHighestDiscount = useMemo(() => {
-    console.log(cartSummary.usedPromotions);
-    return cartSummary.usedPromotions.sort(
+    console.log(cartSummaryData.usedPromotions);
+    return cartSummaryData.usedPromotions.sort(
       (a, b) => b.calculatedDiscount - a.calculatedDiscount
     );
-  }, [cartSummary.usedPromotions]);
+  }, [cartSummaryData.usedPromotions]);
 
   return (
     <>
       <span>
         Łączna cena:
-        {cartSummary.basePrice !== cartSummary.totalPrice && (
-          <PriceBeforeDiscount>{cartSummary.basePrice}</PriceBeforeDiscount>
+        {cartSummaryData.basePrice !== cartSummaryData.totalPrice && (
+          <PriceBeforeDiscount>{cartSummaryData.basePrice}</PriceBeforeDiscount>
         )}
-        {cartSummary.totalPrice} zł
+        {cartSummaryData.totalPrice} zł
       </span>
       {sortedPromotionsByHighestDiscount.length > 0 && (
         <div>
           Lista kwalifikujących się promocji, zaaplikowano najkorzystniejszą:
-          {sortedPromotionsByHighestDiscount.map(({ promotionInfo }, i) => (
-            <PromotionInfo key={uuidv4()} activeDiscount={i === 0}>
+          {sortedPromotionsByHighestDiscount.map(({ promotionInfo }, index) => (
+            <PromotionInfo key={uuidv4()} activeDiscount={index === 0}>
               {promotionInfo.type === "package" && (
                 <>
                   Pakiet:{" "}
                   {offer &&
-                    promotionInfo.services.map((serviceId, i) => (
+                    promotionInfo.services.map((serviceId, index) => (
                       <React.Fragment key={uuidv4()}>
                         {getServiceNameById({
                           serviceId: serviceId,
                           offer: offer,
                         })}
-                        {promotionInfo.services.length - 1 !== i ? (
+                        {promotionInfo.services.length - 1 !== index ? (
                           " + "
                         ) : (
                           <> kosztuje {promotionInfo.packagePrice} zł</>
@@ -51,13 +51,13 @@ export const CartSummary = ({ cartSummary, offer }: Props) => {
               {promotionInfo.type === "gratis" && (
                 <>
                   W pakiecie:{" "}
-                  {promotionInfo.services.map((serviceId, i) => (
+                  {promotionInfo.services.map((serviceId, index) => (
                     <React.Fragment key={uuidv4()}>
                       {getServiceNameById({
                         serviceId: serviceId,
                         offer: offer,
                       })}
-                      {promotionInfo.services.length - 1 !== i ? (
+                      {promotionInfo.services.length - 1 !== index ? (
                         " + "
                       ) : (
                         <>

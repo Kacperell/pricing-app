@@ -9,7 +9,6 @@ interface Props {
 }
 export const CartSummary = ({ cartSummaryData, offer }: Props) => {
   const sortedPromotionsByHighestDiscount = useMemo(() => {
-    console.log(cartSummaryData.usedPromotions);
     return cartSummaryData.usedPromotions.sort(
       (a, b) => b.calculatedDiscount - a.calculatedDiscount
     );

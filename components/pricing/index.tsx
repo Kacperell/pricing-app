@@ -70,7 +70,6 @@ const Pricing: React.FC = () => {
       .map((id) => offer.services.find((s) => s.id === id)?.price ?? 0)
       .reduce((total, price) => total + price, 0);
 
-    console.log("Offer,pro", offer.promotions);
     const promotions = offer.promotions.filter((promotion) =>
       promotion.services.every((serviceId) =>
         selectedServices.includes(serviceId)
